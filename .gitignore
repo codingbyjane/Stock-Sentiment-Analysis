@@ -1,0 +1,22 @@
+# Virtual environment
+venv/
+.env/
+sent_env/
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# HuggingFace / datasets cache
+.cache/
+datasets/
+models/
+
+# VSCode
+.vscode/
+
+# MacOS
+.DS_Store
