@@ -39,8 +39,7 @@ def text_classification(model_name, dataset):
     pipe = pipeline("text-classification", model=model_name)
 
     # Analyze texts sentiment ("document" field of the Xsum dataset)
-    result = pipe(dataset['document'], truncation=True, max_length = 512, batch_size=16) # adding a batch size for faster processing
-
+    result = pipe(list(dataset['document']), truncation=True, max_length = 512) # Truncation and max_length to handle long articles
     # Clean up resources
     del pipe # Deleting pipe from object memrory to clean up GPU/CPU space
 
@@ -97,4 +96,5 @@ sets_positive = {
 venny4py(sets = sets_positive)
 plt.title("Positive Sentiment Overlap Between Models")
 
-#plt.show()
+plt.show()
+
