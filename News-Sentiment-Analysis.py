@@ -107,7 +107,17 @@ other_models_positive.extend(distilbert_result[distilbert_result['label'] == 'PO
 other_models_positive.extend(bert_base_result[bert_base_result['label'] == 'POSITIVE'].index.tolist())
 other_models_positive.extend(deepseek_result[deepseek_result['label'] == 'POSITIVE'].index.tolist())
 
-uniquely_finbert_positive_indicies = set(finbert_positive_indices) - set(other_models_positive)
+uniquely_finbert_positive_indices = set(finbert_positive_indices) - set(other_models_positive)
 
-for index in uniquely_finbert_positive_indicies:
+# Print articles uniquely identified as positive by FinBERT
+for index in uniquely_finbert_positive_indices:
     print(f"Article {index}: {tesla_articles[index]['document'][:500]}...\n")
+
+for index in uniquely_finbert_positive_indices:
+
+    print(f"\nArticle {index} predictions:")
+
+    print(f"FinBERT: {finbert_result['label'][index]}, {round(finbert_result['score'][index], 2)}") # Display FinBERT result with score rounded to 2 decimal places
+    print(f"DistilBERT: {distilbert_result['label'][index]}, {round(distilbert_result['score'][index], 2)}")
+    print(f"BERT-Base: {bert_base_result['label'][index]}, {round(bert_base_result['score'][index], 2)}")
+    print(f"DeepSeek: {deepseek_result['label'][index]}, {round(deepseek_result['score'][index], 2)}")
