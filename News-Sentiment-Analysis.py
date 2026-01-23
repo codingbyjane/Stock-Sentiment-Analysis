@@ -96,5 +96,18 @@ sets_positive = {
 venny4py(sets = sets_positive)
 plt.title("Positive Sentiment Overlap Between Models")
 
-plt.show()
+#plt.show()
 
+# Find articles uniquely identified as positive by FinBERT
+finbert_positive_indices = finbert_result[finbert_result['label'] == 'POSITIVE'].index.tolist()
+
+other_models_positive = []
+
+other_models_positive.extend(distilbert_result[distilbert_result['label'] == 'POSITIVE'].index.tolist())
+other_models_positive.extend(bert_base_result[bert_base_result['label'] == 'POSITIVE'].index.tolist())
+other_models_positive.extend(deepseek_result[deepseek_result['label'] == 'POSITIVE'].index.tolist())
+
+uniquely_finbert_positive_indicies = set(finbert_positive_indices) - set(other_models_positive)
+
+for index in uniquely_finbert_positive_indicies:
+    print(f"Article {index}: {tesla_articles[index]['document'][:500]}...\n")
