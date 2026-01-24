@@ -147,3 +147,33 @@ for index in range(len(tesla_articles)):
 if published_dates: # Check if published_dates is not empty
     first_date = min(published_dates)
     last_date = max(published_dates)
+
+# Fetch Tesla stock data for the corresponding dates
+tesla_stock_data = yf.download('TSLA', start=first_date, end=last_date + timedelta(days=1)) # Adding one day to include the last date
+
+# Identify the published dates of articles classified as positive by FinBERT
+published_dates_posiitive = []
+
+for index in finbert_positive_indices:
+    article_text = tesla_articles[index]['document']
+
+    # Regex to capture the date pattern in the articles
+    date_match = re.search(r"\.\s+(\d{1,2}:\d{1,2}\s+EST,\s+\d{1,2}\s+\w+\s+\d{4})\s+\.", article_text)
+
+    if date_match:
+        # Get the extracted date string
+        date_str = date_match.group(1) # Retrievs the first captured group from a regex match
+
+        try:
+            # Try to parse the date string into a datetime object
+            published_date = datetime.strptime(date_str, "%H %M EST, %d %B %Y")
+            published_dates_posiitive.append(published_date)
+        except ValueError:
+            print(f"Article {index}: Unable to parse date: '{date_str}'")
+
+# Find the first and last dates using min and max on datetime objects
+# Check if published_dates is not empty
+
+if published_dates_posiitive:
+    first_date_positive = min(published_dates_posiitive)
+    last_date_positive = max(published_dates_posiitive)
