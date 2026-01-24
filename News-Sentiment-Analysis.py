@@ -121,3 +121,23 @@ for index in uniquely_finbert_positive_indices:
     print(f"DistilBERT: {distilbert_result['label'][index]}, {round(distilbert_result['score'][index], 2)}")
     print(f"BERT-Base: {bert_base_result['label'][index]}, {round(bert_base_result['score'][index], 2)}")
     print(f"DeepSeek: {deepseek_result['label'][index]}, {round(deepseek_result['score'][index], 2)}")
+
+# Find out the first and last available dates on Tesla articles to plot the Tesla stock chart between these dates
+published_dates = []
+
+for index in range(len(tesla_articles)):
+    article_text = tesla_articles[index['document']]
+
+    # Regex to capture the date pattern in the articles
+    date_match = re.search(r"\.\s+(\d{1,2}:\d{1,2}\s+EST,\s+\d{1,2}\s+\w+\s+\d{4})\s+\.", article_text)
+
+    if date_match:
+        # Get the extracted date string
+        date_str = date_match.group(1) # Retrieves the first captured group from a regex match
+
+        try:
+            # Attempt to parse the date string into a datetime object
+            published_date = datetime.strptime(date_str, "%H:%M EST, %d %B %Y")
+            published_dates.append(published_date)
+        except ValueError:
+            print(f"Article {index}: Unable to parse date: '{date_str}'")
