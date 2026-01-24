@@ -141,3 +141,9 @@ for index in range(len(tesla_articles)):
             published_dates.append(published_date)
         except ValueError:
             print(f"Article {index}: Unable to parse date: '{date_str}'")
+
+# Find the first and last dates using min and max on datetime objects
+
+if published_dates: # Check if published_dates is not empty
+    first_date = min(published_dates)
+    last_date = max(published_dates)
