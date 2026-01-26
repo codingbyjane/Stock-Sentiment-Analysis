@@ -232,5 +232,8 @@ for i, date in enumerate(published_dates_negative):
                      xy = (date_timestamp, close_price + 0.3),
                      xytext = (date_timestamp - timedelta(days=5), close_price + 5),
                      arrowprops = dict(facecolor='black', shrink=0.05, width=0.5, headwidth=3)) # Reduced width
+    else:
+        print(f"Date {date_timestamp} is out of stock data range.")
+
 
 
