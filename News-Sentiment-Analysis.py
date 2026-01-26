@@ -201,3 +201,36 @@ for index in finbert_negative:
 if published_dates_negative:
     first_date_negative = min(published_dates_negative)
     last_date_negative = max(published_dates_negative)
+
+# Plot Tesla's stock market prices, indicating the article dates
+plt.figure(figsize=(12,6))
+plt.plot(tesla_stock_data.index, tesla_stock_data['Close'], label='TSLA Close Price', color='blue')
+plt.title('Tesla Stock Prices with Annotated Dates')
+plt.xlabel('Date')
+plt.ylabel('Stock Price (USD)')
+plt.grid(True)
+plt.legend() # Add legend to the plot to display label
+
+# Set x-axis limits to start from January 1, 2013
+plt.xlim(pd.Timestamp('2013-01-01'), tesla_stock_data.index.max())
+
+# Add annotations for each date in published_dates_negative (black arrows)
+for i, date in enumerate(published_dates_negative):
+    date_only = date.date()
+    date_timestamp = pd.Timestamp(date_only)
+
+    if date_timestamp >= tesla_stock_data.index.min() and date_timestamp <= tesla_stock_data.index.max(): # Ensure the date is within the stock data range
+        try:
+            close_price = tesla_stock_data.loc[date_timestamp]['Close']
+        except KeyError:
+            print(f"No stock data for date: {date_timestamp}")
+            continue
+        annotation_text = f"Negative {i+1}"
+
+        # Adjust xytext and arrowprops for shorter, thinner arrows
+        plt.annotate(annotation_text,
+                     xy = (date_timestamp, close_price + 0.3),
+                     xytext = (date_timestamp - timedelta(days=5), close_price + 5),
+                     arrowprops = dict(facecolor='black', shrink=0.05, width=0.5, headwidth=3)) # Reduced width
+
+
