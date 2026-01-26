@@ -236,4 +236,24 @@ for i, date in enumerate(published_dates_negative):
         print(f"Date {date_timestamp} is out of stock data range.")
 
 
+# Add annotations for each date in published_dates_positives (red arrows)
+for i, date in enumerate(published_dates_positive):
+    date_only = date.date()
+    date_timestamp = pd.Timestamp(date_only)
 
+    if date_timestamp >= tesla_stock_data.index.min() and date_timestamp <= tesla_stock_data.index.max(): # Ensure the date is within the stock data range
+        try:
+            close_price = tesla_stock_data.loc[date_timestamp]['Close']
+        except KeyError:
+            print(f"No stock data for date: {date_timestamp}")
+            continue
+
+        annotation_text = f"Positive {i+1}"
+        plt.annotate(annotation_text,
+                     xy = (date_timestamp, close_price + 0.3),
+                     xytext = (date_timestamp + timedelta(days=5), close_price + 5),
+                     arrowprops = dict(facecolor='red', shrink=0.05, width=0.5, headwidth=3)) # Reduced width
+    else:
+        print(f"Date {date_timestamp} is out of stock data range.")
+
+plt.show()
