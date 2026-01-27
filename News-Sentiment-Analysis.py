@@ -216,8 +216,8 @@ plt.xlim(pd.Timestamp('2013-01-01'), tesla_stock_data.index.max())
 
 # Add annotations for each date in published_dates_negative (black arrows)
 for i, date in enumerate(published_dates_negative):
-    date_only = date.date()
-    date_timestamp = pd.Timestamp(date_only)
+    date_only = date.date() # Extract the date part only form the datetime object
+    date_timestamp = pd.Timestamp(date_only) # Convert to pandas Timestamp object for indexing
 
     if date_timestamp >= tesla_stock_data.index.min() and date_timestamp <= tesla_stock_data.index.max(): # Ensure the date is within the stock data range
         try:
@@ -256,4 +256,4 @@ for i, date in enumerate(published_dates_positive):
     else:
         print(f"Date {date_timestamp} is out of stock data range.")
 
-plt.show()
+#plt.show()
