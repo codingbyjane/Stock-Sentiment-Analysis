@@ -52,7 +52,7 @@ bert_base_result = text_classification("bert-base-uncased", tesla_articles)
 deepseek_result = text_classification("deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", tesla_articles)
 
 # Harmonize sentiment labels across the models for comparison
-bert_base_result['label'].replace(['1 star', '2 stars'], 'NEGATIVE', inplace=True) # Inplace=True modifies the existing DataFrame instead of creating a new one
+''' bert_base_result['label'].replace(['1 star', '2 stars'], 'NEGATIVE', inplace=True) # Inplace=True modifies the existing DataFrame instead of creating a new one
 bert_base_result['label'].replace(['4 star', '5 stars'], 'POSITIVE', inplace=True)
 bert_base_result['label'].replace(['3 stars'], 'NEUTRAL', inplace=True)
 
@@ -60,7 +60,25 @@ distilbert_result['label'].replace(['LABEL_0'], 'NEGATIVE', inplace=True)
 distilbert_result['label'].replace(['LABEL_1'], 'POSITIVE', inplace=True)
 
 deepseek_result['label'].replace(['LABEL_0'], 'NEGATIVE', inplace=True)
-deepseek_result['label'].replace(['LABEL_1'], 'POSITIVE', inplace=True)
+deepseek_result['label'].replace(['LABEL_1'], 'POSITIVE', inplace=True) '''
+
+bert_base_result['label'] = bert_base_result['label'].replace({ # Using replace method to map multiple values at once, removing inplace=True to avoid confusion
+    '1 star': 'NEGATIVE',
+    '2 stars': 'NEGATIVE',
+    '3 stars': 'NEUTRAL',
+    '4 star': 'POSITIVE',
+    '5 stars': 'POSITIVE'
+})
+
+distilbert_result['label'] = distilbert_result['label'].replace({
+    'LABEL_0': 'NEGATIVE',
+    'LABEL_1': 'POSITIVE'
+})
+
+deepseek_result['label'] = deepseek_result['label'].replace({
+    'LABEL_0': 'NEGATIVE',
+    'LABEL_1': 'POSITIVE'
+})
 
 # Plot negative sentiment distribution overlap for each model
 finbert_negative = finbert_result[finbert_result['label'] == 'NEGATIVE'].index.tolist()
