@@ -147,7 +147,10 @@ for index in range(len(tesla_articles)):
     article_text = tesla_articles[index]['document']
 
     # Regex to capture the date pattern in the articles
-    date_match = re.search(r"\.\s+(\d{1,2}:\d{1,2}\s+EST,\s+\d{1,2}\s+\w+\s+\d{4})\s+\.", article_text)
+    # date_match = re.search(r"\.\s+(\d{1,2}:\d{1,2}\s+EST,\s+\d{1,2}\s+\w+\s+\d{4})\s+\.", article_text) -> too strickt, modified to be more flexible
+
+    pattern_txt_month = r"\b(\d{1,2}\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})\b"
+    pattern_num_month = r"\b(\d{1,2}[-/]\d{1,2}[-/]\d{4}|\d{4}[-/]\d{1,2}[-/]\d{1,2})\b"
 
     if date_match:
         # Get the extracted date string
