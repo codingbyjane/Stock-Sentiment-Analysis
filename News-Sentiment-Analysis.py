@@ -166,8 +166,10 @@ if published_dates: # Check if published_dates is not empty
     first_date = min(published_dates)
     last_date = max(published_dates)
 
-# Fetch Tesla stock data for the corresponding dates
-tesla_stock_data = yf.download('TSLA', start=first_date, end=last_date + timedelta(days=1)) # Adding one day to include the last date
+    tesla_stock_data = yf.download('TSLA', start=first_date, end=last_date + timedelta(days=1)) # Adding one day to include the last date
+
+''' # Fetch Tesla stock data for the corresponding dates
+tesla_stock_data = yf.download('TSLA', start=first_date, end=last_date + timedelta(days=1)) # Adding one day to include the last date '''
 
 # Identify the published dates of articles classified as positive by FinBERT
 published_dates_positive = []
