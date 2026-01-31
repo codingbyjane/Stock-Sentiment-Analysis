@@ -152,16 +152,43 @@ for index in range(len(tesla_articles)):
     pattern_txt_month = r"\b(\d{1,2}\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})\b"
     pattern_num_month = r"\b(\d{1,2}[-/]\d{1,2}[-/]\d{4}|\d{4}[-/]\d{1,2}[-/]\d{1,2})\b"
 
-    if date_match:
-        # Get the extracted date string
-        date_str = date_match.group(1) # Retrieves the first captured group from a regex match
+    date_match = re.search(pattern_txt_month, article_text) # First, try to match textual month format
 
-        try:
-            # Attempt to parse the date string into a datetime object
-            published_date = datetime.strptime(date_str, "%H:%M EST, %d %B %Y")
-            published_dates.append(published_date)
-        except ValueError:
-            print(f"Article {index}: Unable to parse date: '{date_str}'")
+    if not date_match: # If no match, try numeric month format
+        date_match = re.search(pattern_num_month, article_text)
+
+        if date_match:
+            # Get the extracted date string
+            date_str = date_match.group(1) # Retrieves the first captured group from a regex match
+
+            parsed = False # Flag to indicate successful parsing
+
+            try:
+                # Attempt to parse the date string into a datetime object
+                # For textual month format
+                published_date = datetime.strptime(date_str, "%d %B %Y")
+                parsed = True
+
+            except ValueError:
+                pass
+                
+            # If this catches failure of the textual format, try numeric formats
+            if not parsed:
+                for fmt in ("%d-%m-%Y", "%Y-%m-%d"):
+                    try:
+                        # Numeric format: day/month/year
+                        published_date = datetime.strptime(date_str, fmt)
+                        parsed = True
+                        break # Stop after the first successful format
+
+                    except ValueError:
+                        continue
+            if parsed:
+                published_dates.append(published_date)
+            else:
+                print(f"Article {index}: Unable to parse date: '{date_str}'")
+
+
 
 # Find the first and last dates using min and max on datetime objects
 
