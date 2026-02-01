@@ -140,17 +140,26 @@ for index in uniquely_finbert_positive_indices:
     print(f"BERT-Base: {bert_base_result['label'][index]}, {round(bert_base_result['score'][index], 2)}")
     print(f"DeepSeek: {deepseek_result['label'][index]}, {round(deepseek_result['score'][index], 2)}")
 
+
 # Find out the first and last available dates on Tesla articles to plot the Tesla stock chart between these dates
+
+article_dates = {} # Dictionary to store article index and its corresponding published date
 published_dates = []
+
+# Regex to capture the date pattern in the articles
+# Defining RegEx outside of the loop for efficiency
+
+pattern_txt_month = r"\b(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})\b"
+pattern_num_month = r"\b(\d{1,2}[-/]\d{1,2}[-/]\d{4}|\d{4}[-/]\d{1,2}[-/]\d{1,2})\b"
+
+# Supported datetime formats for parsing numeric month dates
+datetime_formats = ("%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y", "%Y/%m/%d", "%d %B %Y") # also outside the loop for efficiency
 
 for index in range(len(tesla_articles)):
     article_text = tesla_articles[index]['document']
 
     # Regex to capture the date pattern in the articles
     # date_match = re.search(r"\.\s+(\d{1,2}:\d{1,2}\s+EST,\s+\d{1,2}\s+\w+\s+\d{4})\s+\.", article_text) -> too strickt, modified to be more flexible
-
-    pattern_txt_month = r"\b(\d{1,2}\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})\b"
-    pattern_num_month = r"\b(\d{1,2}[-/]\d{1,2}[-/]\d{4}|\d{4}[-/]\d{1,2}[-/]\d{1,2})\b"
 
     date_match = re.search(pattern_txt_month, article_text) # First, try to match textual month format
 
@@ -159,11 +168,10 @@ for index in range(len(tesla_articles)):
 
     # if any string match is found, try prasing it into datetime object
     if date_match:
-        # Get the extracted date string
         date_str = date_match.group(1) # Retrieves the first captured group from a regex match
         parsed = False # Flag to indicate successful parsing
 
-        try:
+        '''try:
             # Attempt to parse the date string into a datetime object
             # For textual month format
             published_date = datetime.strptime(date_str, "%d %B %Y")
@@ -173,18 +181,20 @@ for index in range(len(tesla_articles)):
             pass
                 
         # If this catches failure of the textual format, try numeric formats
-        if not parsed:
-            for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y", "%Y/%m/%d"):
-                try:
-                    # Try parsing any match of the numeric month format
-                    published_date = datetime.strptime(date_str, fmt)
-                    parsed = True
-                    break # Stop after the first successful format
+        if not parsed:'''
 
-                except ValueError:
-                        continue
+        for fmt in datetime_formats:
+            try:
+                # Try parsing any match of the numeric month format
+                published_date = datetime.strptime(date_str, fmt)
+                parsed = True
+                break # Stop after the first successful format
+
+            except ValueError:
+                continue
             
         if parsed:
+            article_dates[index] = published_date
             published_dates.append(published_date)
         else:
             # print(f"Article {index}: Unable to parse date: '{date_str}'")
@@ -197,10 +207,8 @@ if published_dates: # Check if published_dates is not empty
     first_date = min(published_dates)
     last_date = max(published_dates)
 
+    # Fetch Tesla stock data for the corresponding dates
     tesla_stock_data = yf.download('TSLA', start=first_date, end=last_date + timedelta(days=1)) # Adding one day to include the last date
-
-''' # Fetch Tesla stock data for the corresponding dates
-tesla_stock_data = yf.download('TSLA', start=first_date, end=last_date + timedelta(days=1)) # Adding one day to include the last date '''
 
 # Identify the published dates of articles classified as positive by FinBERT
 published_dates_positive = []
@@ -252,6 +260,7 @@ for index in finbert_negative:
 if published_dates_negative:
     first_date_negative = min(published_dates_negative)
     last_date_negative = max(published_dates_negative)
+
 
 # Plot Tesla's stock market prices, indicating the article dates
 plt.figure(figsize=(12,6))
@@ -307,4 +316,4 @@ for i, date in enumerate(published_dates_positive):
     else:
         print(f"Date {date_timestamp} is out of stock data range.")
 
-#plt.show()
+plt.show()
