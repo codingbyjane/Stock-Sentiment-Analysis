@@ -144,7 +144,7 @@ for index in uniquely_finbert_positive_indices:
 # Find out the first and last available dates on Tesla articles to plot the Tesla stock chart between these dates
 
 article_dates = {} # Dictionary to store article index and its corresponding published date
-published_dates = []
+published_dates = [] # List to store all published dates
 
 # Regex to capture the date pattern in the articles
 # Defining RegEx outside of the loop for efficiency
@@ -210,25 +210,13 @@ if published_dates: # Check if published_dates is not empty
     # Fetch Tesla stock data for the corresponding dates
     tesla_stock_data = yf.download('TSLA', start=first_date, end=last_date + timedelta(days=1)) # Adding one day to include the last date
 
+
 # Identify the published dates of articles classified as positive by FinBERT
 published_dates_positive = []
 
 for index in finbert_positive_indices:
-    article_text = tesla_articles[index]['document']
-
-    # Regex to capture the date pattern in the articles
-    date_match = re.search(r"\.\s+(\d{1,2}:\d{1,2}\s+EST,\s+\d{1,2}\s+\w+\s+\d{4})\s+\.", article_text)
-
-    if date_match:
-        # Get the extracted date string
-        date_str = date_match.group(1) # Retrievs the first captured group from a regex match
-
-        try:
-            # Try to parse the date string into a datetime object
-            published_date = datetime.strptime(date_str, "%H:%M EST, %d %B %Y")
-            published_dates_positive.append(published_date)
-        except ValueError:
-            print(f"Article {index}: Unable to parse date: '{date_str}'")
+    if index in article_dates:
+        published_dates_positive.append(article_dates[index])
 
 # Find the first and last dates using min and max on datetime objects
 # Check if published_dates is not empty
@@ -241,19 +229,8 @@ if published_dates_positive:
 published_dates_negative = []
 
 for index in finbert_negative:
-    article_text = tesla_articles[index]['document']
-
-    date_match = re.search(r"\.\s+(\d{1,2}:\d{1,2}\s+EST,\s+\d{1,2}\s+\w+\s+\d{4})\s+\.", article_text)
-
-    if date_match:
-        # Get the extracted date string
-        date_str = date_match.group(1)
-
-        try:
-            published_date = datetime.strptime(date_str, "%H:%M EST, %d %B %Y")
-            published_dates_negative.append(published_date)
-        except ValueError:
-            print(f"Article {index}: Unable to parse date: '{date_str}'")
+    if index in article_dates:
+        published_dates_negative.append(article_dates[index])
 
 # Find the first and last dates using min and max on datetime objects
 # Check if published_dates is not empty
