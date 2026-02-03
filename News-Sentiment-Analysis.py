@@ -286,9 +286,13 @@ for i, date in enumerate(published_dates_positive):
             continue
 
         annotation_text = f"Positive {i+1}"
+        
+        # Calculate a dynamic y-offset for visibility
+        y_offset = 0.02 * tesla_stock_data['Close'].max()  # 2% of max price
+
         plt.annotate(annotation_text,
                      xy = (date_timestamp, close_price + 0.3),
-                     xytext = (date_timestamp + timedelta(days=5), close_price + 5),
+                     xytext = (date_timestamp + timedelta(days=5), close_price + y_offset),
                      arrowprops = dict(facecolor='red', shrink=0.05, width=0.5, headwidth=3)) # Reduced width
     else:
         print(f"Date {date_timestamp} is out of stock data range.")
